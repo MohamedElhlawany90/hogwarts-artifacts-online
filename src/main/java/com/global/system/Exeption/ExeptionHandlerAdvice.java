@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.global.artifact.ArtifactNotFoundExeption;
 import com.global.system.Result;
 import com.global.system.StatusCode;
 
@@ -20,9 +19,9 @@ import com.global.system.StatusCode;
 public class ExeptionHandlerAdvice {
 	
 	
-	@ExceptionHandler(ArtifactNotFoundExeption.class)
+	@ExceptionHandler({ObjectNotFoundException.class})
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	Result handleArtifactNotFoundExeption(ArtifactNotFoundExeption ex) {
+	Result handleObjectNotFoundExeption(ObjectNotFoundException ex) {
 		
 		return new Result(false,StatusCode.NOT_FOUND , ex.getMessage()) ;
 		  

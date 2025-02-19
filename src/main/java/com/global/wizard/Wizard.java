@@ -8,6 +8,8 @@ import com.global.artifact.Artifact;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
@@ -15,7 +17,9 @@ import jakarta.persistence.OneToMany;
 public class Wizard implements Serializable{
 	
 	@Id
-	private int id ;
+	// This line is replace IdWorker class for Artifacts, It generates an id for wizard automaticaly starting with 1 as a default for the first wizard
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+	private Integer id ;
 	
 	private String name;
 	
@@ -27,13 +31,12 @@ public class Wizard implements Serializable{
 		
 	}
 
-
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -71,9 +74,14 @@ public class Wizard implements Serializable{
 		
 		return this.artifacts.size();
 	}
-	
-	
-	
+
+
 	
 
+	public void removeAllArtifacts() {
+		this.artifacts.stream().forEach(artifact -> artifact.setOwner(null));
+		this.artifacts = null;
+		//this.artifacts = new ArrayList<>(); This is better way
+	}
+	
 }

@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
 import com.global.artifact.utils.IdWorker;
+import com.global.system.Exeption.ObjectNotFoundException;
 import com.global.wizard.Wizard;
 
 @ExtendWith(MockitoExtension.class)
@@ -112,8 +113,8 @@ class ArtifactServiceTest {
 		   
 		   //Then  انت هنا مستنى الاكسبشن ودا هياكد لو كانت فعلا الميثود اللى قبلك مسكته وعملتله ثرو ولا لا
 		   assertThat(thrown)
-		   .isInstanceOf(ArtifactNotFoundExeption.class)
-		   .hasMessage("Could not found artifact with Id 1250808601744904192 :("); 
+		   .isInstanceOf(ObjectNotFoundException.class)
+		   .hasMessage("Could not find artifact with Id 1250808601744904192 :("); 
 		   
 			verify(artifactRepository, times(1)).findById("1250808601744904192");
 
@@ -213,7 +214,7 @@ class ArtifactServiceTest {
 		   
 		   // When
 		   
-		  assertThrows(ArtifactNotFoundExeption.class, ()->{
+		  assertThrows(ObjectNotFoundException.class, ()->{
 			  
 			  artifactService.update("1250808601744904192", update);
 		  });
@@ -233,7 +234,7 @@ class ArtifactServiceTest {
 		 
 		   
 		   //When
-		   assertThrows(ArtifactNotFoundExeption.class, ()->{
+		   assertThrows(ObjectNotFoundException.class, ()->{
 			   artifactService.delete("1250808601744904192"); 
 		   });
 		   
