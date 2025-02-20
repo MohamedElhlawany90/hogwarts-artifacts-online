@@ -47,7 +47,7 @@ class ArtifactControllerTest {
 
 	List<Artifact> artifacts ;
 	
-	@Value("${api.endpoint.base-url}")
+	@Value("${api.endpoint.base-url}") // String will go to the application properties and copy url
 	String baseUrl ;
 	
 	@BeforeEach
