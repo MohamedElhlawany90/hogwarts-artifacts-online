@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.global.artifact.Artifact;
+import com.global.artifact.ArtifactRepository;
 import com.global.artifact.utils.IdWorker;
 import com.global.system.Exeption.ObjectNotFoundException;
 
@@ -14,15 +16,17 @@ import jakarta.transaction.Transactional;
 public class WizardService {
 	
 private final WizardRepository wizardRepository;
+
+private final ArtifactRepository artifactRepository;
 	
+	
+	public WizardService(WizardRepository wizardRepository, ArtifactRepository artifactRepository) {
+	super();
+	this.wizardRepository = wizardRepository;
+	this.artifactRepository = artifactRepository;
+}
 	
 
-	public WizardService(WizardRepository wizardRepository) {
-		
-		this.wizardRepository = wizardRepository;	
-	}
-
-	
 	public  Wizard findById(Integer wizardId) {
 		
 		
@@ -64,5 +68,23 @@ private final WizardRepository wizardRepository;
 		this.wizardRepository.deleteById(wizardId);
 		
 	}
+    
+    public void assignArtifact(Integer wizardId , String artifactId) {
+    	
+    	// Find Artifact by id from DB. 
+    	Artifact artifactToBeAssigned = this.artifactRepository.findById(artifactId).orElseThrow(()-> new ObjectNotFoundException("artifact", artifactId));
+    	
+    	// Find Wizard by id from DB
+    	Wizard wizard = this.wizardRepository.findById(wizardId).orElseThrow(()-> new ObjectNotFoundException("wizard", wizardId));
+
+    	
+    	// Artifact Assignment
+    	// We need to see if the artifact is already owned by some wizard
+    	if(artifactToBeAssigned.getOwner() !=null) {
+    		artifactToBeAssigned.getOwner().removeArtifact(artifactToBeAssigned);
+    	} 
+    	wizard.addArtifact(artifactToBeAssigned);
+    	
+    }
 
 }
