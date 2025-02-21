@@ -228,8 +228,6 @@ class ArtifactServiceTest {
 	   void testDeleteSuccess() {
 		   
 		   //Given 
-		   
-		   
 		   given(artifactRepository.findById("1250808601744904192")).willReturn(Optional.empty());
 		 
 		   

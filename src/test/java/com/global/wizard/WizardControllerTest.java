@@ -34,7 +34,7 @@ import com.global.wizard.dto.WizardDto;
 
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 class WizardControllerTest {
 
 	
@@ -123,7 +123,7 @@ class WizardControllerTest {
 
 
 	   @Test
-	   void testFindAllwizardsSuccess() throws Exception {
+	   void testFindAllWizardsSuccess() throws Exception {
 		    
 		        // Given
 				 given(this.wizardService.findAll()).willReturn(this.wizards);
