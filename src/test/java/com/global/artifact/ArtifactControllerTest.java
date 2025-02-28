@@ -33,7 +33,7 @@ import com.global.system.StatusCode;
 import com.global.system.Exeption.ObjectNotFoundException;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false) // Turn off Spring Security because this is JUST API end point and we just need to test it we don't need security.
 class ArtifactControllerTest {
 	
 	@Autowired
@@ -103,7 +103,7 @@ class ArtifactControllerTest {
 	}
 
 	@Test
-	void testFingArtifactByIdSuccess() throws Exception  {
+	void testFindArtifactByIdSuccess() throws Exception  {
 		
 		//Given
 		given(this.artifactService.findById("1250808601744904191"))
@@ -202,14 +202,15 @@ class ArtifactControllerTest {
 						                                  ,"ImageUrl"
 						                                  , null);
 				
-				String json =  this.objectMapper.writeValueAsString(artifactDto);
-				
 				
 				 Artifact updatedArtifact = new Artifact();
 				 updatedArtifact.setId("1250808601744904192");
 				 updatedArtifact.setName("Invisibility cloak");
 				 updatedArtifact.setDescription("A new description");
 				 updatedArtifact.setImageUrl("ImageUrl");
+				 
+				 String json =  this.objectMapper.writeValueAsString(artifactDto);
+				 
 				 
 				 given(this.artifactService.update(eq("1250808601744904192"),Mockito.any(Artifact.class))).willReturn(updatedArtifact);
 				

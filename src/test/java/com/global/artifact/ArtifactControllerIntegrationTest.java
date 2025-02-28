@@ -1,0 +1,139 @@
+package com.global.artifact;
+
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import org.hamcrest.Matchers;
+import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.global.system.StatusCode;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@DisplayName("Integration test for Artifact API endpoints")
+@Tag("integration")
+public class ArtifactControllerIntegrationTest {
+	
+	@Autowired
+	MockMvc mockMvc;
+	
+	@Autowired
+	ObjectMapper objectMapper;
+	
+	String token;
+	
+	@Value("${api.endpoint.base-url}")
+	 String baseUrl;
+	
+	
+	@BeforeEach
+	void setUp() throws Exception {
+		ResultActions resultActions = this.mockMvc.perform(post(this.baseUrl + "/users/login").with(httpBasic("john", "123456")));
+		
+		MvcResult mvcResult = resultActions.andDo(print()).andReturn();
+		 String contentAsString = mvcResult.getResponse().getContentAsString();
+		 JSONObject json = new JSONObject(contentAsString);
+		 this.token = "Bearer " + json.getJSONObject("data").getString("token");//Don't forget to add "Bearer " as a prefix.
+		
+	}
+	
+	@Test
+	@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+	void findAllArtifactsSuccess() throws Exception {
+		
+		this.mockMvc.perform(get(this.baseUrl + "/artifacts").accept(MediaType.APPLICATION_JSON))
+		    .andExpect(jsonPath("$.flag").value(true))
+		    .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+		    .andExpect(jsonPath("$.message").value("Find All Success"))
+		    .andExpect(jsonPath("$.data", Matchers.hasSize(6)));	    
+		
+	}
+	
+	// Don't forget to add the header with it's token .header("Authorization", this.token)
+	// because we save the bearer token in Authorization request header 
+	
+	@Test
+	@DisplayName("Check Add Artifact With valid input (POST)")
+	void testAddArtifactSuccess() throws Exception {
+		
+		Artifact a = new Artifact();
+		 a.setName("Remembrall");
+		 a.setDescription("A Remembral was a magical large marble-sized glass ball that contained smoke which turned red when its owner or user had forgotten something. It turned clear once whatever was forgotten was remembered.");
+		 a.setImageUrl("ImageUrl");
+		 
+			String json =  this.objectMapper.writeValueAsString(a);
+
+
+		 
+		 this.mockMvc.perform(post(this.baseUrl +"/artifacts").contentType(MediaType.APPLICATION_JSON).header("Authorization", this.token).content(json).accept(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.flag").value(true))
+			.andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+			.andExpect(jsonPath("$.message").value("Add Success"))
+			.andExpect(jsonPath("$.data.id").isNotEmpty())
+			.andExpect(jsonPath("$.data.name").value("Remembrall"))
+			.andExpect(jsonPath("$.data.description").value("A Remembral was a magical large marble-sized glass ball that contained smoke which turned red when its owner or user had forgotten something. It turned clear once whatever was forgotten was remembered."))
+			.andExpect(jsonPath("$.data.imageUrl").value("ImageUrl"));
+		 this.mockMvc.perform(get(this.baseUrl + "/artifacts").accept(MediaType.APPLICATION_JSON))
+		    .andExpect(jsonPath("$.flag").value(true))
+		    .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+		    .andExpect(jsonPath("$.message").value("Find All Success"))
+		    .andExpect(jsonPath("$.data", Matchers.hasSize(7)));
+	}
+	
+	@Test
+	@DisplayName("Check Update Artifact With valid input (PUT)")
+	void testUpdateArtifactSuccess() throws Exception {
+		
+		Artifact updatedArtifact = new Artifact();
+		 updatedArtifact.setId("1250808601744904192");
+		 updatedArtifact.setName("Invisibility cloak-updated");
+		 updatedArtifact.setDescription("A new description for the updated Artifact");
+		 updatedArtifact.setImageUrl("ImageUrl");
+		
+		 String json =  this.objectMapper.writeValueAsString(updatedArtifact);
+		 
+		 this.mockMvc.perform(put(this.baseUrl +"/artifacts/1250808601744904192").header("Authorization", this.token).contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.flag").value(true))
+			.andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+			.andExpect(jsonPath("$.message").value("Update Success"))
+			.andExpect(jsonPath("$.data.id").value("1250808601744904192"))
+			.andExpect(jsonPath("$.data.name").value("Invisibility cloak-updated"))
+			.andExpect(jsonPath("$.data.description").value("A new description for the updated Artifact"))
+			.andExpect(jsonPath("$.data.imageUrl").value("ImageUrl"));
+		
+	}
+	
+	@Test
+	@DisplayName("Check DELETE Artifact With valid input (DELETE)")
+	void testDeleteArtifactSuccess() throws Exception {
+		
+		this.mockMvc.perform(delete(this.baseUrl +"/artifacts/1250808601744904191").header("Authorization", this.token).accept(MediaType.APPLICATION_JSON))
+		.andExpect(jsonPath("$.flag").value(true))
+		.andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+		.andExpect(jsonPath("$.message").value("Delete Success"))
+		.andExpect(jsonPath("$.data").isEmpty());
+		
+		
+	}
+
+}
