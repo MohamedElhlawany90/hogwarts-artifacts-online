@@ -35,7 +35,6 @@ public class UserController {
 		private final UserToUserDtoConverter userToUserDtoConverter ;   
 		
 		public UserController(UserService userService, UserDtoToUserConverter userDtoToUserConverter,UserToUserDtoConverter userToUserDtoConverter) {
-			super();
 			this.userService = userService;
 			this.userDtoToUserConverter = userDtoToUserConverter;
 			this.userToUserDtoConverter = userToUserDtoConverter;

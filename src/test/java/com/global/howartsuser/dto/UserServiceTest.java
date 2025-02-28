@@ -2,7 +2,7 @@ package com.global.howartsuser.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -20,15 +20,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.global.system.Exeption.ObjectNotFoundException;
-import com.global.wizard.Wizard;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 	
 	@Mock
 	UserRepositery userRepositery;
+	
+	@Mock
+	PasswordEncoder passwordEncoder;
 	
 	@InjectMocks
 	UserService userService;
@@ -143,6 +146,7 @@ class UserServiceTest {
 		   newUser.setEnabled(true);
 		   newUser.setRoles("user");
 		  
+		   given(this.passwordEncoder.encode(newUser.getPassword())).willReturn("Encoded Passord");
 		   given(this.userRepositery.save(newUser)).willReturn(newUser);
 		   
 		   // When

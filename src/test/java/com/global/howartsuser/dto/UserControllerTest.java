@@ -1,6 +1,5 @@
 package com.global.howartsuser.dto;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -30,11 +29,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.global.system.StatusCode;
 import com.global.system.Exeption.ObjectNotFoundException;
-import com.global.wizard.Wizard;
-import com.global.wizard.dto.WizardDto;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false) // Turn off Spring Security because this is JUST API end point and we just need to test it we don't need security.
 class UserControllerTest {
 
 	

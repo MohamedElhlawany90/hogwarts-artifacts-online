@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.global.artifact.Artifact;
 import com.global.artifact.ArtifactRepository;
 import com.global.howartsuser.dto.HogwartsUser;
-import com.global.howartsuser.dto.UserRepositery;
+import com.global.howartsuser.dto.UserService;
 import com.global.wizard.Wizard;
 import com.global.wizard.WizardRepository;
 
@@ -19,17 +19,16 @@ public class DBDataIntializer implements CommandLineRunner{
 	
 	private final WizardRepository wizardRepository ;
 	
-	private final UserRepositery userRepositery ;
+	private final UserService userService ;
 
 
 	public DBDataIntializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository,
-			UserRepositery userRepositery) {
+			UserService userService) {
 		super();
 		this.artifactRepository = artifactRepository;
 		this.wizardRepository = wizardRepository;
-		this.userRepositery = userRepositery;
+		this.userService = userService;
 	}
-
 
 
 	@Override
@@ -124,9 +123,9 @@ public class DBDataIntializer implements CommandLineRunner{
 		u3.setEnabled(false);
 		u3.setRoles("user");
 		
-		this.userRepositery.save(u1);
-		this.userRepositery.save(u2);
-		this.userRepositery.save(u3);
+		this.userService.save(u1);
+		this.userService.save(u2);
+		this.userService.save(u3);
 		
 	}
 	
